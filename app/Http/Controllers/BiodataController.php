@@ -33,14 +33,12 @@ class BiodataController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'name'=>'required',
-            'content'=>'required'
-        ]);
-            // what is this meaning
-        Biodata::create($request->all());
-        return redirect()->route('biodata.index')->with('success','new data has been added');
+        'name'=>'required',
+        'content'=>'required'
+            ]);
+            Biodata::create($request->all());
+            return redirect()->route('biodata.index')->with('success','new data has been added');
     }
-
     /**
      * Display the specified resource.
      *
@@ -49,7 +47,9 @@ class BiodataController extends Controller
      */
     public function show($id)
     {
-        //
+        $biodata=Biodata::find($id);
+        return view('biodata.detail', compact('biodata'));
+        // このbiodataはどこから
     }
     /**
      * Show the form for editing the specified resource.
@@ -57,9 +57,10 @@ class BiodataController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
+     public function edit($id)
     {
-        //
+        $biodata = Biodata::find($id);
+        return view('biodata.edit', compact('biodata'));
     }
     /**
      * Update the specified resource in storage.
@@ -70,7 +71,16 @@ class BiodataController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $request->validate([
+            'name'=>'required',
+            'content'=>'required'
+                ]);
+
+                $biodata=Biodata::find($id);
+                $biodata->name=$request->get('name');
+                $biodata->content=$request->get('content');
+                $biodata->save();
+                return redirect()->route('biodata.index')->with('success', 'Updated');
     }
     /**
      * Remove the specified resource from storage.
@@ -80,6 +90,8 @@ class BiodataController extends Controller
      */
     public function destroy($id)
     {
-        //
-    }
+        $biodata=Biodata::find($id);
+        $biodata->delete();
+        return redirect()->route('biodata.index')->with('success','Biodata is deleted') ;
+  }
 }
